@@ -27,22 +27,31 @@ type payloadType = {
 
 type todoRefType = {
   current: {
-    value?: string
-  }
+    value?: string | null
+  } | null
+}
+
+type checkboxRefType = {
+  current: {
+    checked?: HTMLInputElement | boolean | null
+  } | null
 }
 
 function App() {
   const todos = useSelector((state: stateType) => state.todo)
   const dispatch = useDispatch()
-  const todoRef: todoRefType = useRef()
-  const checkboxRef = useRef()
-  function handleCheckboxChange(id) {
-    const value = checkboxRef.current.checked
+  const todoRef: todoRefType = useRef(null)
+  const checkboxRef = useRef<HTMLInputElement>(null)
+  function handleCheckboxChange(id: number | string) {
+    const value: boolean = checkboxRef.current?.checked || false
     dispatch(toggleCompleted({ id, value }))
   }
-  function handleDeleteClick(id) {
-    console.log(id)
-    dispatch(removeTodo({ id }))
+  type someType = {
+    id: number | string
+  }
+  function handleDeleteClick(id: string | number) {
+    const payload: someType = { id }
+    dispatch(removeTodo(payload))
   }
   return (
     <div className="container">
@@ -57,10 +66,10 @@ function App() {
           onClick={() => {
             const newTodo: payloadType = {
               id: Math.round(Math.random() * 10000),
-              text: todoRef.current.value || "",
+              text: todoRef?.current?.value || "",
               completed: false,
             }
-            todoRef.current.value = ""
+            todoRef.current!.value = ""
             dispatch(addTodo(newTodo))
           }}
         >

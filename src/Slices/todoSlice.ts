@@ -1,5 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit"
 
+type Todo = {
+  id: number | string
+  text: string
+  completed: boolean
+}
+
+type StateType = Todo[]
+
 type stateType = {
   id: number | string
   text: string
@@ -14,14 +22,24 @@ type payloadType = {
   }
 }
 
+type payloadForCheckboxType = {
+  payload: {
+    id: number | string
+    value: boolean
+  }
+}
+
 const todoSlice = createSlice({
   name: "todos",
-  initialState: [],
+  initialState: [] as StateType,
   reducers: {
     addTodo: (state: stateType, { payload }: payloadType) => {
       state.push(payload)
     },
-    removeTodo: (state: stateType, { payload }: payloadType) => {
+    removeTodo: (
+      state: stateType,
+      { payload }: { payload: { id: number | string } },
+    ) => {
       return state.filter((todo) => {
         return todo.id !== payload.id
       })
@@ -35,7 +53,10 @@ const todoSlice = createSlice({
       }
       return state
     },
-    toggleCompleted: (state: stateType, { payload }: payloadType) => {
+    toggleCompleted: (
+      state: stateType,
+      { payload }: payloadForCheckboxType,
+    ) => {
       const index: number = state.findIndex((todo) => todo.id == payload.id)
       if (index !== -1) {
         return state.map((todo, i) =>
